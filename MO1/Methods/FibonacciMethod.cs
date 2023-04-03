@@ -10,15 +10,11 @@ public class FibonacciMethod : IExtremumSearchMethod
         var a = minimumInterval.LeftPoint;
         var b = minimumInterval.RightPoint;
 
-        var i = 1;
-        var fibonacciNumber = CalcFibonacciNumber(i);
+        var k = 1;
 
-        for (i = 2; (b - a) / MethodsConfig.Eps > fibonacciNumber; i++)
-        {
-            fibonacciNumber = CalcFibonacciNumber(i);
-        }
+        for (; (b - a) / MethodsConfig.Eps > CalcFibonacciNumber(k); ++k);
 
-        var n = i - 2;
+        var n = k - 2;
 
         var x1 = a + CalcFibonacciNumber(n) / CalcFibonacciNumber(n + 2) * (b - a);
         var x2 = a + CalcFibonacciNumber(n + 1) / CalcFibonacciNumber(n + 2) * (b - a);
@@ -26,58 +22,32 @@ public class FibonacciMethod : IExtremumSearchMethod
         var f1Value = function(x1);
         var f2Value = function(x2);
 
-        if (f1Value < f2Value)
-        {
-            b = x2;
-            x2 = x1;
-            f2Value = f1Value;
-            x1 = a + CalcFibonacciNumber(n) / CalcFibonacciNumber(n + 2) * (b - a);
-            f1Value = function(x1);
-        }
-        else if (f1Value > f2Value)
-        {
-            a = x1;
-            x1 = x2;
-            f1Value = f2Value;
-            x2 = a + CalcFibonacciNumber(n + 1) / CalcFibonacciNumber(n + 2) * (b - a);
-            f2Value = function(x2);
-        }
-
-        var currentMinimumInterval = new Interval(a, b);
-
-        IterationInformer.Inform(1, currentMinimumInterval);
-
-        var maxIterations = Math.Log((minimumInterval.RightPoint - minimumInterval.LeftPoint) / MethodsConfig.Eps) /
-                            Math.Log((Math.Sqrt(5) + 1) / 2);
-
-        for (var k = 2; k != n; k++)
+        for (var i = 1; i != n; i++)
         {
             if (f1Value < f2Value)
             {
                 b = x2;
                 x2 = x1;
                 f2Value = f1Value;
-                x1 = a + CalcFibonacciNumber(n - k + 1) / CalcFibonacciNumber(n - k + 3) * (b - a);
+                x1 = a + CalcFibonacciNumber(n - i + 1) / CalcFibonacciNumber(n - i + 3) * (b - a);
                 f1Value = function(x1);
-                currentMinimumInterval.RightPoint = b;
             }
             else if (f1Value > f2Value)
             {
                 a = x1;
                 x1 = x2;
                 f1Value = f2Value;
-                x2 = a + CalcFibonacciNumber(n - k + 2) / CalcFibonacciNumber(n - k + 3) * (b - a);
+                x2 = a + CalcFibonacciNumber(n - i + 2) / CalcFibonacciNumber(n - i + 3) * (b - a);
                 f2Value = function(x2);
-                currentMinimumInterval.LeftPoint = a;
             }
 
-            IterationInformer.Inform(k, currentMinimumInterval);
+            IterationInformer.Inform(i, x1, x2, a, b, f1Value, f2Value);
         }
 
-        return (a + b) / 2;
+        return (x1 + x2) / 2;
     }
 
-    private double CalcFibonacciNumber(int n)
+    private static double CalcFibonacciNumber(int n)
     {
         return (Math.Pow((1 + Math.Sqrt(5)) / 2, n) - Math.Pow((1 - Math.Sqrt(5)) / 2, n)) / Math.Sqrt(5);
     }

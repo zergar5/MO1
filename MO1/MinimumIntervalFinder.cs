@@ -29,7 +29,7 @@ public class MinimumIntervalFinder
 
         var minimumInterval = new Interval(xPrev, xNext);
 
-        IterationInformer.Inform(1, minimumInterval);
+        IterationInformer.Inform(1, xPrev, function(xPrev));
 
         for (var i = 2; function(xPrev) > function(xNext); i++)
         {
@@ -40,8 +40,10 @@ public class MinimumIntervalFinder
             minimumInterval.LeftPoint = xPrev;
             minimumInterval.RightPoint = xNext;
 
-            IterationInformer.Inform(i, minimumInterval);
+            IterationInformer.Inform(i, xPrev, function(xPrev));
         }
+
+        minimumInterval.LeftPoint -= h / 2;
 
         return minimumInterval;
     }

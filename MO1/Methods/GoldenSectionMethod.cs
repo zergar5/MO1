@@ -32,14 +32,9 @@ public class GoldenSectionMethod : IExtremumSearchMethod
             f2Value = function(x2);
         }
 
-        var currentMinimumInterval = new Interval(a, b);
+        IterationInformer.Inform(1, x1, x2, a, b, f1Value, f2Value);
 
-        IterationInformer.Inform(1, currentMinimumInterval);
-
-        var maxIterations = Math.Log((minimumInterval.RightPoint - minimumInterval.LeftPoint) / MethodsConfig.Eps) /
-                            Math.Log((Math.Sqrt(5) + 1) / 2);
-
-        for (var k = 2; Math.Abs(b - a) > MethodsConfig.Eps && k <= maxIterations; k++)
+        for (var i = 2; Math.Abs(b - a) > MethodsConfig.Eps; i++)
         {
             if (f1Value < f2Value)
             {
@@ -48,7 +43,6 @@ public class GoldenSectionMethod : IExtremumSearchMethod
                 f2Value = f1Value;
                 x1 = a + 0.381966011d * (b - a);
                 f1Value = function(x1);
-                currentMinimumInterval.RightPoint = b;
             }
             else if (f1Value > f2Value)
             {
@@ -57,10 +51,9 @@ public class GoldenSectionMethod : IExtremumSearchMethod
                 f1Value = f2Value;
                 x2 = b - 0.381966011d * (b - a);
                 f2Value = function(x2);
-                currentMinimumInterval.LeftPoint = a;
             }
 
-            IterationInformer.Inform(k, currentMinimumInterval);
+            IterationInformer.Inform(i, x1, x2, a, b, f1Value, f2Value);
         }
 
         return (a + b) / 2;

@@ -24,14 +24,9 @@ public class DichotomyMethod : IExtremumSearchMethod
             a = x1;
         }
 
-        var currentMinimumInterval = new Interval(a, b);
+        IterationInformer.Inform(1, x1, x2, a, b, f1Value, f2Value);
 
-        IterationInformer.Inform(1, currentMinimumInterval);
-
-        var maxIterations = Math.Log((minimumInterval.RightPoint - minimumInterval.LeftPoint) / MethodsConfig.Eps) /
-                            Math.Log(2);
-
-        for (var k = 2; Math.Abs(b - a) > MethodsConfig.Eps && k <= maxIterations; k++)
+        for (var i = 2; Math.Abs(b - a) > MethodsConfig.Eps; i++)
         {
             x1 = (a + b - MethodsConfig.Delta) / 2;
             x2 = (a + b + MethodsConfig.Delta) / 2;
@@ -42,15 +37,13 @@ public class DichotomyMethod : IExtremumSearchMethod
             if (f1Value < f2Value)
             {
                 b = x2;
-                currentMinimumInterval.RightPoint = b;
             }
             else if (f1Value > f2Value)
             {
                 a = x1;
-                currentMinimumInterval.LeftPoint = a;
             }
 
-            IterationInformer.Inform(k, currentMinimumInterval);
+            IterationInformer.Inform(i, x1, x2, a, b, f1Value, f2Value);
         }
 
         return (a + b) / 2;
